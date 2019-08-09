@@ -1,0 +1,90 @@
+{
+   ExpandedHierarchyInLayout: "",
+   guistr: "# # String gsaved with Nlview 6.6.11  2017-06-12 bk=1.3860 VDI=40 GEI=35 GUI=JA:1.6
+#  -string -flagsOSRD
+preplace port S_AXIS_ONE_MIN_C_QUAL_RIGHT -pg 1 -y 60 -defaultsOSRD
+preplace port S_AXIS_LEFT_TA -pg 1 -y 200 -defaultsOSRD
+preplace port M_AXIS_RESULT_TA -pg 1 -y 480 -defaultsOSRD
+preplace port M_AXIS_RESULT_INSERTION -pg 1 -y 870 -defaultsOSRD
+preplace port M_AXIS_ID -pg 1 -y 600 -defaultsOSRD
+preplace port S_AXIS_ONE_CONSTANT -pg 1 -y 1430 -defaultsOSRD
+preplace port S_AXIS_LEFT_TB -pg 1 -y 220 -defaultsOSRD
+preplace port S_AXIS_D_QUAL -pg 1 -y 1280 -defaultsOSRD
+preplace port M_AXIS_RESULT_TB -pg 1 -y 1170 -defaultsOSRD
+preplace port S_AXIS_TOP_MATCH_BIS -pg 1 -y 1300 -defaultsOSRD
+preplace port S_AXIS_LEFT_INSERTION -pg 1 -y 680 -defaultsOSRD
+preplace port S_AXIS_TOP_INSERTION -pg 1 -y 500 -defaultsOSRD
+preplace port S_AXIS_LEFT_MATCH -pg 1 -y 830 -defaultsOSRD
+preplace port S_AXIS_I_QUAL_RIGHT -pg 1 -y 1480 -defaultsOSRD
+preplace port S_AXIS_D_QUAL_RIGHT -pg 1 -y 1500 -defaultsOSRD
+preplace port S_AXIS_C_QUAL_BIS -pg 1 -y 980 -defaultsOSRD
+preplace port M_AXIS_RESULT_MATCH -pg 1 -y 330 -defaultsOSRD
+preplace port S_AXIS_ID -pg 1 -y 610 -defaultsOSRD
+preplace port S_AXIS_C_QUAL -pg 1 -y 660 -defaultsOSRD
+preplace port aclk -pg 1 -y 1520 -defaultsOSRD
+preplace port S_AXIS_TOP_MATCH -pg 1 -y 1140 -defaultsOSRD
+preplace port M_AXIS_RESULT_DELETION -pg 1 -y 1020 -defaultsOSRD
+preplace port S_AXIS_TOP_DELETION -pg 1 -y 520 -defaultsOSRD
+preplace port S_AXIS_PRIOR -pg 1 -y 360 -defaultsOSRD
+preplace port S_AXIS_I_QUAL -pg 1 -y 810 -defaultsOSRD
+preplace port aresetn -pg 1 -y 1540 -defaultsOSRD
+preplace port S_AXIS_TOP_DELETION_BIS -pg 1 -y 1000 -defaultsOSRD
+preplace inst axis_data_fifo_1 -pg 1 -lvl 2 -y 1160 -defaultsOSRD
+preplace inst axis_data_fifo_2 -pg 1 -lvl 2 -y 380 -defaultsOSRD
+preplace inst axis_data_fifo_3 -pg 1 -lvl 3 -y 630 -defaultsOSRD
+preplace inst mul_0 -pg 1 -lvl 3 -y 480 -defaultsOSRD
+preplace inst mul_1 -pg 1 -lvl 3 -y 1170 -defaultsOSRD
+preplace inst add_0 -pg 1 -lvl 2 -y 530 -defaultsOSRD
+preplace inst sub_0 -pg 1 -lvl 2 -y 1460 -defaultsOSRD
+preplace inst mul_2 -pg 1 -lvl 3 -y 330 -defaultsOSRD
+preplace inst add_1 -pg 1 -lvl 2 -y 230 -defaultsOSRD
+preplace inst mul_3 -pg 1 -lvl 2 -y 840 -defaultsOSRD
+preplace inst add_2 -pg 1 -lvl 3 -y 870 -defaultsOSRD
+preplace inst mul_4 -pg 1 -lvl 2 -y 690 -defaultsOSRD
+preplace inst add_3 -pg 1 -lvl 3 -y 1020 -defaultsOSRD
+preplace inst mul_5 -pg 1 -lvl 2 -y 1310 -defaultsOSRD
+preplace inst add_4 -pg 1 -lvl 1 -y 1510 -defaultsOSRD
+preplace inst mul_6 -pg 1 -lvl 2 -y 1010 -defaultsOSRD
+preplace inst axis_data_fifo_0 -pg 1 -lvl 2 -y 80 -defaultsOSRD
+preplace netloc S_AXIS_B_0_7 1 0 2 NJ 1000 NJ
+preplace netloc mul_0_M_AXIS_RESULT 1 3 1 NJ
+preplace netloc mul_2_M_AXIS_RESULT 1 3 1 NJ
+preplace netloc add_2_M_AXIS_RESULT 1 3 1 NJ
+preplace netloc mul_6_M_AXIS_RESULT 1 2 1 N
+preplace netloc S_AXIS_A_0_1 1 0 2 NJ 500 NJ
+preplace netloc mul_3_M_AXIS_RESULT 1 2 1 N
+preplace netloc S_AXIS_A_0_3 1 0 2 NJ 200 NJ
+preplace netloc mul_1_M_AXIS_RESULT 1 3 1 NJ
+preplace netloc mul_4_M_AXIS_RESULT 1 2 1 670
+preplace netloc add_1_M_AXIS_RESULT 1 2 1 670
+preplace netloc S_AXIS_A_0_4 1 0 2 NJ 810 NJ
+preplace netloc S_AXIS_A_0_5 1 0 2 NJ 660 NJ
+preplace netloc add_3_M_AXIS_RESULT 1 3 1 NJ
+preplace netloc mul_5_M_AXIS_RESULT 1 2 1 700
+preplace netloc S_AXIS_B_0_1 1 0 2 NJ 520 NJ
+preplace netloc S_AXIS_0_1 1 0 2 NJ 60 NJ
+preplace netloc S_AXIS_D_QUAL_RIGHT_1 1 0 1 NJ
+preplace netloc S_AXIS_A_0_6 1 0 2 NJ 1280 NJ
+preplace netloc axis_data_fifo_3_M_AXIS1 1 3 1 NJ
+preplace netloc S_AXIS_0_2 1 0 2 NJ 1140 NJ
+preplace netloc S_AXIS_ONE_CONSTANT_1 1 0 2 NJ 1430 NJ
+preplace netloc S_AXIS_A_0_7 1 0 2 NJ 980 NJ
+preplace netloc S_AXIS_0_3 1 0 2 NJ 360 NJ
+preplace netloc S_AXIS_B_0_3 1 0 2 NJ 220 NJ
+preplace netloc S_AXIS_A_0_8 1 0 1 NJ
+preplace netloc aresetn_1 1 0 3 20 1600 310 930 690
+preplace netloc S_AXIS_B_0_4 1 0 2 NJ 830 NJ
+preplace netloc S_AXIS_0_4 1 0 3 NJ 610 NJ 610 NJ
+preplace netloc floating_point_0_M_AXIS_RESULT 1 2 1 710
+preplace netloc axis_data_fifo_1_M_AXIS 1 2 1 670
+preplace netloc axis_data_fifo_0_M_AXIS 1 2 1 700
+preplace netloc add_4_M_AXIS_RESULT 1 1 1 330
+preplace netloc add_0_M_AXIS_RESULT 1 2 1 670
+preplace netloc aclk_0_1 1 0 3 30 1590 320 920 680
+preplace netloc S_AXIS_B_0_5 1 0 2 NJ 680 NJ
+preplace netloc axis_data_fifo_3_M_AXIS 1 2 1 670
+preplace netloc S_AXIS_B_0_6 1 0 2 NJ 1300 NJ
+levelinfo -pg 1 0 170 500 880 1070 -top 0 -bot 1610
+",
+}
+0

@@ -1,0 +1,7 @@
+#define NUMBER_OF_SEMAPHORES 4
+
+const char * const SEMAPHORE_NAMES[NUMBER_OF_SEMAPHORES] = {
+    "/PHMM_ACC_1_SEM",
+    "/PHMM_ACC_2_SEM",
+    "/PHMM_ACC_3_SEM",
+    "/PHMM_ACC_4_SEM" };

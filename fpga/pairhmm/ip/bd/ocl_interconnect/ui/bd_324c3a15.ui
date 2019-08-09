@@ -1,0 +1,25 @@
+{
+   "ExpandedHierarchyInLayout":"",
+   "guistr":"# # String gsaved with Nlview 6.8.11  2018-08-07 bk=1.4403 VDI=40 GEI=35 GUI=JA:9.0 TLS
+#  -string -flagsOSRD
+preplace port M00_AXI_LITE -pg 1 -y -400 -defaultsOSRD
+preplace port ACLK -pg 1 -y -470 -defaultsOSRD
+preplace port ARESETN -pg 1 -y -450 -defaultsOSRD
+preplace port M01_AXI_LITE -pg 1 -y -380 -defaultsOSRD
+preplace port M02_AXI_LITE -pg 1 -y -360 -defaultsOSRD
+preplace port M03_AXI_LITE -pg 1 -y -340 -defaultsOSRD
+preplace port S00_AXI_LITE -pg 1 -y -490 -defaultsOSRD
+preplace inst axi_interconnect_0 -pg 1 -lvl 1 -y -370 -defaultsOSRD
+preplace netloc axi_interconnect_0_M02_AXI 1 1 1 N
+preplace netloc ACLK_0_1 1 0 1 30
+preplace netloc axi_interconnect_0_M00_AXI 1 1 1 N
+preplace netloc S_AXI_0_1 1 0 1 N
+preplace netloc axi_interconnect_0_M01_AXI 1 1 1 N
+preplace netloc ARESETN_0_1 1 0 1 20
+preplace netloc axi_interconnect_0_M03_AXI 1 1 1 N
+levelinfo -pg 1 0 230 490 -top -590 -bot 310
+"
+}
+{
+   "da_clkrst_cnt":"5"
+}

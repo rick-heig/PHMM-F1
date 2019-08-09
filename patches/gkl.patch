@@ -1,0 +1,885 @@
+diff --git a/src/main/java/com/intel/gkl/pairhmm/IntelPairHmmFpga.java b/src/main/java/com/intel/gkl/pairhmm/IntelPairHmmFpga.java
+index 861fc94..076e125 100644
+--- a/src/main/java/com/intel/gkl/pairhmm/IntelPairHmmFpga.java
++++ b/src/main/java/com/intel/gkl/pairhmm/IntelPairHmmFpga.java
+@@ -9,5 +9,6 @@ public final class IntelPairHmmFpga extends IntelPairHmm {
+     public IntelPairHmmFpga() {
+         setNativeLibraryName(NATIVE_LIBRARY_NAME);
+         useFpga = true;
++	useOmp = true;
+     }
+ }
+diff --git a/src/main/native/common/debug.h b/src/main/native/common/debug.h
+index 59b5061..65c358e 100644
+--- a/src/main/native/common/debug.h
++++ b/src/main/native/common/debug.h
+@@ -2,7 +2,7 @@
+ #define DEBUG_H
+ 
+ #include <stdio.h>
+-
++//#define DEBUG
+ #ifdef DEBUG
+ #  define DBG(M, ...) fprintf(stderr, "[DEBUG] (%s:%d) : " M "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__)
+ #  define INFO(M, ...) fprintf(stderr, "[INFO] (%s:%d) : " M "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__)
+diff --git a/src/main/native/pairhmm/CMakeLists.txt b/src/main/native/pairhmm/CMakeLists.txt
+index 2885f20..f122351 100644
+--- a/src/main/native/pairhmm/CMakeLists.txt
++++ b/src/main/native/pairhmm/CMakeLists.txt
+@@ -11,6 +11,7 @@ set_property(SOURCE avx512_impl.cc APPEND_STRING PROPERTY COMPILE_FLAGS " -mavx
+ # common includes
+ #---------------------------------------------------------------------
+ include_directories(../common)
++include_directories(../../../../../aws-fpga/sdk/userspace/include)
+ 
+ #---------------------------------------------------------------------
+ # pairhmm_shacc (stub version)
+@@ -47,5 +48,10 @@ endif()
+ #---------------------------------------------------------------------
+ set(TARGET gkl_pairhmm_fpga)
+ add_library(${TARGET} SHARED IntelPairHmm.cc avx_impl.cc avx512_impl.cc pairhmm_common.cc)
+-target_link_libraries(${TARGET} gkl_pairhmm_shacc)
++if(OPENMP_FOUND)
++  set_target_properties(${TARGET} PROPERTIES COMPILE_OPTIONS ${OpenMP_CXX_FLAGS})
++  target_link_libraries(${TARGET} gkl_pairhmm_shacc ${OpenMP_CXX_FLAGS})
++else()
++  target_link_libraries(${TARGET} gkl_pairhmm_shacc)
++endif()
+ install(TARGETS ${TARGET} DESTINATION ${CMAKE_BINARY_DIR})
+diff --git a/src/main/native/pairhmm/IntelPairHmm.cc b/src/main/native/pairhmm/IntelPairHmm.cc
+index 039713f..5242fae 100644
+--- a/src/main/native/pairhmm/IntelPairHmm.cc
++++ b/src/main/native/pairhmm/IntelPairHmm.cc
+@@ -16,6 +16,17 @@
+ #include "shacc_pairhmm.h"
+ #include "JavaData.h"
+ 
++#include <time.h>
++// <chrono> (C++11) and OpenMP will not work together well
++//#include <chrono>
++#define PRINT_TIME_DATA 0
++#define PRINT_RESULTS 0
++// Minimum operations for this algorithm to be interesting on FPGA (empirically found)
++//                       /6543210
++#define MIN_OPS_FOR_FPGA 10000000
++//#define MIN_OPS_FOR_FPGA 5000000
++#define CHECK_RESULTS_FROM_HW 0
++
+ bool g_use_double;
+ int g_max_threads;
+ bool g_use_fpga;
+@@ -101,22 +112,60 @@ JNIEXPORT void JNICALL Java_com_intel_gkl_pairhmm_IntelPairHmm_computeLikelihood
+  jobjectArray readDataArray, jobjectArray haplotypeDataArray, jdoubleArray likelihoodArray)
+ {
+   DBG("Enter");
++  //WARN("Using version of GKL from %s %s", __DATE__, __TIME__);
+ 
+   //==================================================================
+   // get Java data
+   JavaData javaData;
+   std::vector<testcase> testcases = javaData.getData(env, readDataArray, haplotypeDataArray);
+   double* javaResults = javaData.getOutputArray(env, likelihoodArray);
++
++  shacc_pairhmm::Batch batch;
++  bool batch_valid = false;
++  batch = javaData.getBatch();
++
++  size_t total_read_len = 0;
++  size_t total_hap_len = 0;
++  size_t total_ops = 0;
++
++  /* Compute the length of all the reads */
++  for (size_t i = 0; i < batch.num_reads; ++i) {
++      total_read_len += batch.reads[i].length;
++  }
++  /* Compute the length of all the haplotypes */
++  for (size_t i = 0; i < batch.num_haps; ++i) {
++      total_hap_len += batch.haps[i].length;
++  }
++  total_ops = total_read_len * total_hap_len;
++
++
++#ifdef _OPENMP
++  //  INFO("Using OpenMP with max %d threads", g_max_threads);
++#endif
++
++#if PRINT_TIME_DATA
++  //==================================================================
++  // Measure time
++  //auto start = std::chrono::high_resolution_clock::now();
++
++  // This was copied here to be able to use this information for timing
++  // info computation
+   
++  struct timespec start, end;
++  clock_gettime(CLOCK_MONOTONIC, &start); 
++
++  //clock_t start = clock();
++#endif
+   //==================================================================
+   // calcutate pairHMM
+-  shacc_pairhmm::Batch batch;
+-  bool batch_valid = false;
++  //shacc_pairhmm::Batch batch;
++  //bool batch_valid = false;
+   if (g_use_fpga && !g_use_double) {
+-    batch = javaData.getBatch();
+-    batch_valid = shacc_pairhmm::calculate(batch);
++    if (total_ops > MIN_OPS_FOR_FPGA) {
++      batch_valid = shacc_pairhmm::calculate(batch);
++    }
+   }
+-
++  
+ #ifdef _OPENMP
+   #pragma omp parallel for schedule(dynamic, 1) num_threads(g_max_threads)
+ #endif
+@@ -127,17 +176,57 @@ JNIEXPORT void JNICALL Java_com_intel_gkl_pairhmm_IntelPairHmm_computeLikelihood
+       batch_valid ? batch.results[i] : g_compute_full_prob_float(&testcases[i]);
+ 
+     if (result_float < MIN_ACCEPTED) {
++#if CHECK_RESULTS_FROM_HW
++      // This warning is helpfull e.g., in the case where the HW accelerator always returns 0
++      WARN("Result too small and must be computed with double precision");
++#endif
+       double result_double = g_compute_full_prob_double(&testcases[i]);
+       result_final = log10(result_double) - g_ctxd.LOG10_INITIAL_CONSTANT;
+     }
+     else {
+       result_final = (double)(log10f(result_float) - g_ctxf.LOG10_INITIAL_CONSTANT);
++#if CHECK_RESULTS_FROM_HW
++      // This is to check if the hardware accelerator actually returns the same result as the software
++      // Only do this if the batch from hardware is valid (otherwise it is already computed by software)
++      if (batch_valid) {
++        float expected_result = g_compute_full_prob_float(&testcases[i]);
++        double expected_result_final = (double)(log10f(expected_result) - g_ctxf.LOG10_INITIAL_CONSTANT);
++        float error_final = result_final - expected_result_final;
++	float relative_error = error_final / expected_result_final;
++        if (relative_error > 10e-6) {
++          // Report if the result is off by more than 0.01%
++	  // This means we ignore error if it changes the final result by less than 0.01%
++	  // This is due to imprecision in HW computation
++        WARN("---- Final result wrong by : %e - Expected : %e - Got : %e", error_final, expected_result_final, result_final);
++        }
++      }
++#endif
+     }
+ 
+     javaResults[i] = result_final;
+-    DBG("result = %e", result_final);
++#if PRINT_RESULTS
++    WARN("Batch was valid : %d", batch_valid);
++    WARN("result = %e", result_final);
++#endif
+   }
+ 
++#if PRINT_TIME_DATA  
++  //==================================================================
++  // Print time
++  //auto finish = std::chrono::high_resolution_clock::now();
++  //std::chrono::duration<double> elapsed = finish - start;
++  //INFO("Elapsed time: %g s\n", elapsed.count());
++  //double elapsed = ((double)(clock() - start))/CLOCKS_PER_SEC;
++  //INFO("Elapsed time: %e s\n", elapsed);
++  //clock_t elapsed = clock() - start;
++  clock_gettime(CLOCK_MONOTONIC, &end);         //123123123
++  size_t elapsed = (end.tv_sec - start.tv_sec) * 1000000000;
++  elapsed += end.tv_nsec - start.tv_nsec;
++
++  //INFO("Num reads : %d, Num haps : %d", env->GetArrayLength(readDataArray), env->GetArrayLength(haplotypeDataArray));
++  INFO("NH: %d, NR: %d, NO: %llu, Elapsed nanoseconds : %llu", batch.num_haps, batch.num_reads, total_ops, elapsed);
++#endif
++  
+   //==================================================================
+   // release Java data
+   javaData.releaseData(env);
+diff --git a/src/main/native/pairhmm/shacc_pairhmm_stub.cc b/src/main/native/pairhmm/shacc_pairhmm_stub.cc
+index 04c2739..366c7a2 100644
+--- a/src/main/native/pairhmm/shacc_pairhmm_stub.cc
++++ b/src/main/native/pairhmm/shacc_pairhmm_stub.cc
+@@ -1,12 +1,680 @@
+ #include "shacc_pairhmm.h"
++#include "Context.h"
+ #include <debug.h>
+ 
++// User Includes
++#include <errno.h>
++#include <iostream>
++#include <string>
++#include <cstring>
++#include <stdint.h>
++#include <unistd.h>
++#include <fcntl.h>
++#include <semaphore.h>
++
++// FPGA_ACCELERATOR_ENABLED : Uses the FPGA accelerator, if 0 software computation will be used
++#define FPGA_ACCELERATOR_ENABLED 1
++// NUMBER_OF_ACCELERATORS : Number of accelerators used
++#define NUMBER_OF_ACCELERATORS 4
++// MAX_ACCELERATORS : Max number of accelerators supported
++#define MAX_ACCELERATORS 4
++// PRINT_SEMAPHORE : Prints a message when the function could get a semaphore
++#define PRINT_SEMAPHORE 0
++// PRINT_DATA : Prints the batch.
++#define PRINT_DATA 0
++// PRINT_DEBUG : Extra prints to the console for debug purposes.
++#define PRINT_DEBUG 0
++// PRINT_DMA_WRITE_BUFFER : Prints the contents of the DMA buffer that will be sent to the FPGA.
++#define PRINT_DMA_WRITE_BUFFER 0
++// PRINT_RESULTS : Prints results on the console.
++#define PRINT_RESULTS 0
++// LIMITED_JOBS : Will only send a limited number of jobs to the accelerator.
++#define LIMITED_JOBS 0
++// READ_LIMIT : If the number of jobs is limited it will only test at most READ_LIMIT reads against
++//              the haplotypes.
++#define READ_LIMIT 8
++// DO_COMPUTATION : If 0 there will be no computation on the accelerator, just DMA transfers.
++//                  A default value will be returned so that the GKL does not compute the result
++//                  in software. This is to assess the overhead of the DMA transfers etc.
++#define DO_COMPUTATION 1
++// Will stop (hang) at the Nth job if non zero
++#define STOP_JOB 0
++
++const char * const SEMAPHORE_NAMES[MAX_ACCELERATORS] = {
++    "/PHMM_ACC_1_SEM",
++    "/PHMM_ACC_2_SEM",
++    "/PHMM_ACC_3_SEM",
++    "/PHMM_ACC_4_SEM" };
++
++#if FPGA_ACCELERATOR_ENABLED
++
++Context<float> g_ctxf;
++
++// The code for the accelerator comes from a C implementation, it should be
++// rewritten using C++ constructs instead.
++#include <limits>
++
++#include <cstdio>
++#include <cstdlib>
++
++#include <poll.h>
++#include <unistd.h>
++#include <fcntl.h>
++
++
++// FPGA Includes
++#include "fpga_pci.h"
++#include "fpga_mgmt.h"
++#include "fpga_dma.h"
++
++/** Usage: fail_on(condition, label, message format string, [arg1, arg2, ...])*/
++#define fail_on(CONDITION, LABEL, ...)          \
++    do {                                    \
++    if (CONDITION) {                \
++    WARN(__VA_ARGS__);      \
++    goto LABEL;             \
++    }                               \
++    } while (0)
++
++// CMakeLists :
++// Include the libraries
++// include_directories(../../../../../aws-fpga/sdk/userspace/include)
++// use LD_PRELOAD to provide the library on runtime
++
++#define DMA_BUFFER_SIZE       (1024*1024)
++#define CHUNK_LENGTH_IN_BYTES 64
++#define MEM_16G               (1ULL << 34)
++#define ACC_MEM_SPACE_SIZE    (1 << 16)
++#define PHREAD_OFFSET         33
++
++// Control registers
++#define NUMBER_OF_READS_ADDR            0x1000
++#define NUMBER_OF_HAPS_ADDR             0x1004
++#define DDR4_OFFSET_ADDR                0x1008
++#define START_ADDR                      0x1FF0
++
++#define READ_READ_ADDR_BASE_ADDR        0x2000
++#define READ_READ_LEN_BASE_ADDR         0x4000
++#define HAP_HAP_ADDR_BASE_ADDR          0x6000
++#define HAP_HAP_LEN_BASE_ADDR           0x8000
++#define HAP_INITIAL_CONDITION_BASE_ADDR 0xA000
++
++// TODO : Clean unused code and variables (commented)
++
++#endif
++
++#if NUMBER_OF_ACCELERATORS > MAX_ACCELERATORS
++!!! The number of accelerators can not be more than the maximum !!!
++#endif
++
++#if !(NUMBER_OF_ACCELERATORS)
++// TODO : Fix this
++!!! The number of accelerators should not be 0 even if disabled !!!
++#endif
++
+ namespace shacc_pairhmm {
+ 
+-bool calculate(Batch& batch) {
+-  WARN("Using stub version of shacc::calculate()");
+-  // return false so batch will be computed on the CPU
+-  return false;
+-}
++#if FPGA_ACCELERATOR_ENABLED
++
++    static sem_t * semaphores[NUMBER_OF_ACCELERATORS];
++
++    static pci_bar_handle_t pci_bar_handle = PCI_BAR_HANDLE_INIT;
++
++    uint8_t *initialize_buffer() {
++        // Will never be deleted (pointer stored in static variable)
++        return new uint8_t[DMA_BUFFER_SIZE]();
++    }
++
++    int scrub_ddr4(int slot_id, int dimm, size_t offset, size_t length)
++    {
++        int rc = 0;
++        int write_fd = -1;
++        size_t buffer_size = length;
++        uint8_t *write_buffer = (uint8_t*)malloc(buffer_size);
++        if (write_buffer == NULL) {
++            //rc = -ENOMEM;
++            rc = -1;
++            goto out;
++        }
++
++        /* Set ones in the buffer */
++        memset(write_buffer, 0xff, buffer_size);
++
++        /* Open the DMA channel */
++        write_fd = fpga_dma_open_queue(FPGA_DMA_XDMA, slot_id,
++                                       /*channel*/ dimm, /*is_read*/ false);
++        fail_on((rc = (write_fd < 0) ? -1 : 0), out, "unable to open write dma queue");
++
++        /* DMA it to the DDR4 */
++        rc = fpga_dma_burst_write(write_fd, write_buffer, buffer_size, dimm * MEM_16G);
++
++        fail_on(rc, out, "DMA write failed on DIMM: %d", dimm);
++
++    out:
++        if (write_buffer != NULL) {
++            free(write_buffer);
++        }
++        if (write_fd >= 0) {
++            close(write_fd);
++        }
++        /* if there is an error code, exit with status 1 */
++        return (rc ? 1 : 0);
++    }
++
++    /* Transfer DMA Buffer to DDR4 */
++    static inline int dma_buffer_to_ddr4(int slot_id, uint8_t *write_buffer, size_t buffer_size, int dimm) {
++        int rc = 0;
++        int write_fd = -1;
++
++        /* Open the DMA channel */
++        write_fd = fpga_dma_open_queue(FPGA_DMA_XDMA, slot_id, /* Channel */ dimm, /* is_read */ false);
++        fail_on((rc = (write_fd < 0) ? -1 : 0), out, "unable to open write dma queue");
++
++        /* Sending Pair-HMM data to DDR4 */
++        rc = fpga_dma_burst_write(write_fd, write_buffer, buffer_size, dimm * MEM_16G);
++        fail_on(rc, out, "DMA write failed on DIMM %d", dimm);
++
++    out:
++        /* This could be set as static and left open, because opening and closing the channel
++           may take time and not be optimal... */
++        if (write_fd >= 0) {
++            close(write_fd);
++        }
++
++        return rc ? 1 : 0;
++    }
++
++    static inline void fix_phread_scores_temp_f(uint8_t* buffer, const size_t length) {
++#if DO_COMPUTATION
++        for (size_t i = 0; i < length; ++i) {
++            *(buffer + i) += PHREAD_OFFSET;
++        }
++#endif
++    }
++
++    /* Prepare DMA buffer */
++    // This prepares a buffer and formats the data into that buffer so that the
++    // FPGA accelerator can access it the way it is supposed to.
++    static inline size_t batch_to_dma_buffer(const Batch& batch, uint8_t *buffer) {
++        size_t offset = 0;
++
++        // Prepare reads
++        for (size_t i = 0; i < batch.num_reads; ++i) {
++            // Number of 512-bit (64-bytes) chunks
++            const size_t length = batch.reads[i].length;
++            const size_t chunks = ((length - 1) / CHUNK_LENGTH_IN_BYTES) + 1;
++
++            // Copy bases
++	    //std::memset(buffer + offset, '*', chunks * CHUNK_LENGTH_IN_BYTES);
++	    std::memcpy(buffer + offset, batch.reads[i].bases, length);
++            // Update offset
++            offset += chunks * CHUNK_LENGTH_IN_BYTES;
++
++            // Copy qualities
++	    //std::memset(buffer + offset, '*', chunks * CHUNK_LENGTH_IN_BYTES);
++	    std::memcpy(buffer + offset, batch.reads[i].q, length);
++            fix_phread_scores_temp_f(buffer + offset, length);
++            // Update offset
++            offset += chunks * CHUNK_LENGTH_IN_BYTES;
++
++            // Copy insertion qualities
++	    //std::memset(buffer + offset, '*', chunks * CHUNK_LENGTH_IN_BYTES);
++	    std::memcpy(buffer + offset, batch.reads[i].i, length);
++            fix_phread_scores_temp_f(buffer + offset, length);
++            // Update offset
++            offset += chunks * CHUNK_LENGTH_IN_BYTES;
++
++            // Copy deletion qualities
++	    //std::memset(buffer + offset, '*', chunks * CHUNK_LENGTH_IN_BYTES);
++	    std::memcpy(buffer + offset, batch.reads[i].d, length);
++            fix_phread_scores_temp_f(buffer + offset, length);
++            // Update offset
++            offset += chunks * CHUNK_LENGTH_IN_BYTES;
++
++            // Copy continuation qualities
++	    //std::memset(buffer + offset, '*', chunks * CHUNK_LENGTH_IN_BYTES);
++	    std::memcpy(buffer + offset, batch.reads[i].c, length);
++            fix_phread_scores_temp_f(buffer + offset, length);
++            // Update offset
++            offset += chunks * CHUNK_LENGTH_IN_BYTES;
++        }
++
++        // Prepare haps
++        for (size_t i = 0; i < batch.num_haps; ++i) {
++            const size_t length = batch.haps[i].length;
++            const size_t chunks = ((length - 1) / CHUNK_LENGTH_IN_BYTES) + 1;
++
++            // Copy bases
++	    std::memset(buffer + offset, '*', chunks * CHUNK_LENGTH_IN_BYTES);
++	    std::memcpy(buffer + offset, batch.haps[i].bases, length);
++            // Update offset
++            offset += chunks * CHUNK_LENGTH_IN_BYTES;
++        }
++
++        // This is actually the buffer size
++        return offset;
++    }
++
++    void print_dma_write_buffer(uint8_t *buffer, size_t size) {
++	std::cout << "DMA Write buffer (of size " << size << ") : " << std::endl;
++	for (size_t i = 0; i < size; ++i) {
++	    std::cout << buffer[i];
++	    if ((i % 64) == 63) {
++		std::cout << std::endl;
++	    }
++	}
++	std::cout << std::endl;
++    }
++
++    // Configures the Pair-HMM accelerator with the properties of the batch
++    // Note : This function is separate from the one above since they may be
++    // run concurrently / in parallel.
++    int configure_pair_hmm_in_fpga(const Batch& batch, size_t results_offset, int dimm) {
++        // Offset based on which accelerator we use (one accelerator per DDR4 DIMM)
++        const size_t acc_offset = dimm * ACC_MEM_SPACE_SIZE;
++        int rc = 0;
++        size_t offset = 0;
++
++#if PRINT_DEBUG
++	std::cout << "Num reads : " << batch.num_reads << " - Num haps : " << batch.num_haps << std::endl;
++#endif
++
++        rc = fpga_pci_poke(shacc_pairhmm::pci_bar_handle, acc_offset + NUMBER_OF_READS_ADDR, batch.num_reads-1);
++        fail_on(rc, out, "Unable to write number of reads to the fpga !");
++        rc = fpga_pci_poke(shacc_pairhmm::pci_bar_handle, acc_offset + NUMBER_OF_HAPS_ADDR, batch.num_haps-1);
++        fail_on(rc, out, "Unable to write number of haps to the fpga !");
++
++        // Provide the read information
++        for (size_t i = 0; i < batch.num_reads; ++i) {
++            const size_t length = batch.reads[i].length;
++            const size_t chunks = ((length - 1) / CHUNK_LENGTH_IN_BYTES) + 1;
++
++            // Write parameters to the FPGA
++            rc = fpga_pci_poke(shacc_pairhmm::pci_bar_handle, acc_offset + READ_READ_ADDR_BASE_ADDR + (i*4), offset);
++#if PRINT_DEBUG
++	    std::cout << "Read " << i << " address : " << offset << std::endl;
++#endif
++            fail_on(rc, out, "Unable to write read base address to the fpga !");
++            rc = fpga_pci_poke(shacc_pairhmm::pci_bar_handle, acc_offset + READ_READ_LEN_BASE_ADDR + (i*4), length-1);
++#if PRINT_DEBUG
++	    std::cout << "Read " << i << " length : " << length << std::endl;
++#endif
++            fail_on(rc, out, "Unable to write read length to the fpga !");
++
++            // Update offset (address) relative to the beginning of the buffer above
++            // times 5 because bases + q + i + d + c (5 arrays of bytes)
++            offset += chunks * 5 * CHUNK_LENGTH_IN_BYTES;
++        }
++
++        // Provide the hap information
++        for (size_t i = 0; i < batch.num_haps; ++i) {
++            const size_t length = batch.haps[i].length;
++            const size_t chunks = ((length - 1) / CHUNK_LENGTH_IN_BYTES) + 1;
++
++            // Write the parameters to the FPGA
++            rc = fpga_pci_poke(shacc_pairhmm::pci_bar_handle, acc_offset + HAP_HAP_ADDR_BASE_ADDR + (i*4), offset);
++#if PRINT_DEBUG
++	    std::cout << "Hap " << i << " address : " << offset << std::endl;
++#endif
++            fail_on(rc, out, "Unable to write to the fpga !");
++            rc = fpga_pci_poke(shacc_pairhmm::pci_bar_handle, acc_offset + HAP_HAP_LEN_BASE_ADDR + (i*4), length-1);
++            fail_on(rc, out, "Unable to write to the fpga !");
++#if PRINT_DEBUG
++	    std::cout << "Hap " << i << " length : " << length << std::endl;
++#endif
++            //float initial_condition = (std::numeric_limits<float>::max() / 16) / length;
++	    float initial_condition = (g_ctxf.INITIAL_CONSTANT) / length;
++            rc = fpga_pci_poke(shacc_pairhmm::pci_bar_handle, acc_offset + HAP_INITIAL_CONDITION_BASE_ADDR + (i*4), *((uint32_t*)&initial_condition));
++            fail_on(rc, out, "Unable to write to the fpga !");
++#if PRINT_DEBUG
++	    std::cout << "Hap " << i << " initial condition : " << initial_condition << std::endl;
++#endif
++	    offset += chunks * CHUNK_LENGTH_IN_BYTES;
++        }
++
++        // Set result offset address
++        rc = fpga_pci_poke(shacc_pairhmm::pci_bar_handle, acc_offset + DDR4_OFFSET_ADDR, results_offset);
++        fail_on(rc, out, "Unable to write to the fpga !");
++    out:
++        return rc ? 1 : 0;
++    }
++
++    /* Start the algorithm */
++    int start_pair_hmm_on_fpga(int slot_id, int dimm) {
++        // Offset based on which accelerator we use (one accelerator per DDR4 DIMM)
++        const size_t acc_offset = dimm * ACC_MEM_SPACE_SIZE;
++        int rc = 0;
++
++        // The OCL bus is used to configure the FPGA
++        //pci_bar_handle_t pci_bar_handle = PCI_BAR_HANDLE_INIT;
++        //int pf_id = 0;
++        //int bar_id = 0;
++        //int fpga_attach_flags = 0;
++
++        // Attach to the FPGA
++        //rc = fpga_pci_attach(slot_id, pf_id, bar_id, fpga_attach_flags, &pci_bar_handle);
++        //fail_on(rc, out, "Unable to attach to the AFI on slot id %d", slot_id);
++
++        // Send start command
++        rc = fpga_pci_poke(shacc_pairhmm::pci_bar_handle, acc_offset + START_ADDR, 1); // Any value will do
++        fail_on(rc, out, "Unable to write to the fpga !");
++
++    out:
++        return rc ? 1 : 0;
++    }
++
++    /* Function to wait for the results */
++    int wait_on_interrupt(int slot_id, int interrupt_number)
++    {
++        int rc = 0;
++        //pci_bar_handle_t pci_bar_handle = PCI_BAR_HANDLE_INIT;
++        uint32_t fd = 0;
++        uint32_t rd = 0;
++        //uint32_t read_data = 0;
++        struct pollfd fds[1];
++        int num_fds = 1;
++        int poll_timeout = -1; // TODO check, -1 means infinite, otherwise in milliseconds
++        //int pf_id = 0;
++        //int bar_id = 0;
++        //int fpga_attach_flags = 0;
++        char event_file_name[256];
++
++        int device_num = 0;
++        rc = fpga_pci_get_dma_device_num(FPGA_DMA_XDMA, slot_id, &device_num);
++        fail_on((rc = (rc != 0)? 1 : 0), out, "Unable to get xdma device number.");
++
++        rc = sprintf(event_file_name, "/dev/xdma%i_events_%i", device_num, interrupt_number /* Interrupt number */);
++        fail_on((rc = (rc < 0)? 1 : 0), out, "Unable to format event file name.");
++
++        // log_info("Waiting on interrupts");
++        //rc = fpga_pci_attach(slot_id, pf_id, bar_id, fpga_attach_flags, &pci_bar_handle);
++        fail_on(rc, out, "Unable to attach to the AFI on slot id %d", slot_id);
++
++        // log_info("Polling device file: %s for interrupt events", event_file_name);
++        if((fd = open(event_file_name, O_RDONLY)) == -1) {
++            WARN("Error - invalid device\n");
++            fail_on((rc = 1), out, "Unable to open event device");
++        }
++        fds[0].fd = fd;
++        fds[0].events = POLLIN;
++
++        // Poll checks whether an interrupt was generated.
++        rd = poll(fds, num_fds, poll_timeout);
++        if((rd > 0) && (fds[0].revents & POLLIN)) {
++            uint32_t events_user;
++
++            // Check how many interrupts were generated, and clear the interrupt so we can detect
++            // future interrupts.
++            rc = pread(fd, &events_user, sizeof(events_user), 0);
++            fail_on((rc = (rc < 0)? 1:0), out, "call to pread failed.");
++
++            //log_info("Interrupt present for Interrupt %i, events %i. It worked!", 0 /* interrupt_number */, events_user);
++
++            //Clear the interrupt register
++            //rc = fpga_pci_poke(pci_bar_handle, interrupt_reg_offset , 0x1 << (16 + interrupt_number) );
++            //fail_on(rc, out, "Unable to write to the fpga !");
++        }
++        else {
++            WARN("No interrupt generated before timeout - something went wrong.");
++            fail_on((rc = 1), out, "Interrupt generation failed");
++        }
++        close(fd);
++        fd = 0;
++
++    out:
++        if(fd){
++            close(fd);
++        }
++        return rc ? 1 : 0;
++    }
++
++    int get_results(int slot_id, uint32_t offset, Batch& batch, int dimm) {
++        int rc = 0;
++        int read_fd = -1;
++
++        size_t buffer_size = batch.num_reads * batch.num_haps * 4;
++        uint8_t *read_buffer = (uint8_t *)malloc(buffer_size);
++        fail_on((rc = (read_buffer == NULL) ? -1 : 0), out , "unable to allocate memory");
++
++        read_fd = fpga_dma_open_queue(FPGA_DMA_XDMA, slot_id,
++                                      /*channel*/ dimm, /*is_read*/ true);
++        fail_on((rc = (read_fd < 0) ? -1 : 0), out, "unable to open read dma queue");
++
++        rc = fpga_dma_burst_read(read_fd, read_buffer, buffer_size, dimm * MEM_16G + offset);
++        fail_on(rc, out, "DMA read failed on DIMM: %d", dimm);
++
++        // Write the results in the corresponding buffer (provided by the batch)
++        for (int i = 0; i < batch.num_reads * batch.num_haps; i++) {
++#if DO_COMPUTATION
++            batch.results[i] = *((float *)(read_buffer+i*4));
++#else
++	    batch.results[i] = (float)2.86336e30; // Placeholder value (so that it won't be computed in double by the GKL)
++#endif
++#if PRINT_RESULTS
++	    std::cout << " Result " << i << " from FPGA : " << *((float*)(read_buffer+i*4)) << " => " << (double)(log10f(*((float*)(read_buffer+i*4))) - log10f(g_ctxf.INITIAL_CONSTANT)) << std::endl;
++#endif
++            //printf("Result %d : %g - 0x%08x\n", i, *((float *)(read_buffer+i*4)), *((uint32_t *)(read_buffer+i*4)));
++        }
++
++    out:
++        if (read_buffer != NULL) {
++            free(read_buffer);
++        }
++        if (read_fd >= 0) {
++            close(read_fd);
++        }
++        return rc ? 1 : 0;
++    }
++
++#endif
++
++    int pairhmm_on_fpga(Batch& batch, uint8_t *buffer_ptr, int dimm) {
++        int rc = 0;
++
++        size_t buffer_size = 0;
++        size_t results_offset = 0;
++
++        int slot_id = 0;
++
++        // Clean the DDR4
++	//scrub_ddr4(slot_id, 0, 0, 1024*1024);
++
++        // Fill the DMA Buffer
++        buffer_size = batch_to_dma_buffer(batch, buffer_ptr);
++
++#if PRINT_DMA_WRITE_BUFFER
++	print_dma_write_buffer(buffer_ptr, buffer_size);
++#endif
++
++        // Transfer the DMA Buffer
++        rc = dma_buffer_to_ddr4(slot_id, buffer_ptr, buffer_size, dimm);
++        fail_on(rc, out, "DMA transfer to DIMM: %d failed", dimm);
++
++        // Configure the FPGA
++        rc = configure_pair_hmm_in_fpga(batch, /* offset */ buffer_size, dimm);
++        fail_on(rc, out, "Failed to configure the FPGA");
++
++	//usleep(10000);
++#if DO_COMPUTATION
++        // Start the computation
++        rc = start_pair_hmm_on_fpga(slot_id, dimm);
++        fail_on(rc, out, "Failed to start the FPGA");
++
++        // Wait for the interrupt
++        rc = wait_on_interrupt(slot_id, dimm);
++        fail_on(rc, out, "Failed waiting on interrupt");
++#endif
++        // Transfer the result back
++        rc = get_results(slot_id, /* offset */ buffer_size, batch, dimm);
++        fail_on(rc, out, "Failed getting results from FPGA");
++        // DMA from DDR4
++        // Provide the results
++        // The batch has a pointer on results
++
++        // If nothing went wrong return true, if there was a problem return false and
++        // the algorithm will be run on CPU.
++	//for(;;);
++    out:
++        return rc ? 1 : 0;
++    }
++
++    bool calculate(Batch& batch) {
++
++	//WARN("Using version of shacc::calculate() from %s %s", __DATE__, __TIME__);
++
++#if LIMITED_JOBS
++        WARN("ONLY COMPUTING %d JOBS !", batch.num_haps * READ_LIMIT);
++        for (size_t i = 0; i < batch.num_reads * batch.num_haps; ++i) {
++            batch.results[i] = (float)0.0;
++        }
++        if (batch.num_reads > READ_LIMIT) {
++            batch.num_reads = READ_LIMIT;
++        }
++#endif
++
++#if PRINT_DATA
++        static size_t biggest = 0;
++
++        /* Add some logging */
++        INFO("This batch has %d reads and %d haps", batch.num_reads, batch.num_haps);
++        INFO("This batch will require %d applications of the forward algorithm", batch.num_reads * batch.num_haps);
++
++        /* Compute the length of all the reads */
++        size_t total_read_len = 0;
++        for (size_t i = 0; i < batch.num_reads; ++i) {
++            total_read_len += batch.reads[i].length;
++            INFO("Read length : %d", batch.reads[i].length);
++            if (batch.reads[i].length > biggest) {
++                biggest = batch.reads[i].length;
++            }
++            std::cout << "Read " << i << " : " << std::string(batch.reads[i].bases, batch.reads[i].length) << std::endl;
++            std::cout << "Read " << i << " : " << std::string(batch.reads[i].q, batch.reads[i].length) << std::endl;
++            std::cout << "Read " << i << " : " << std::string(batch.reads[i].i, batch.reads[i].length) << std::endl;
++            std::cout << "Read " << i << " : " << std::string(batch.reads[i].d, batch.reads[i].length) << std::endl;
++            std::cout << "Read " << i << " : " << std::string(batch.reads[i].c, batch.reads[i].length) << std::endl;
++        }
++
++        INFO("Average read length : %d", total_read_len / batch.num_reads);
++
++        /* Compute the length of all the haplotypes */
++        size_t total_hap_len = 0;
++        for (size_t i = 0; i < batch.num_haps; ++i) {
++            //INFO("Hap %d length : %d", i, batch.haps[i].length);
++            total_hap_len += batch.haps[i].length;
++            INFO("Hap length : %d", batch.haps[i].length);
++            if (batch.haps[i].length > biggest) {
++                biggest = batch.haps[i].length;
++            }
++            std::cout << "Hap " << i << " : " << std::string(batch.haps[i].bases, batch.haps[i].length) << std::endl;
++        }
++
++        INFO("Average hap length : %d", total_hap_len / batch.num_haps);
++
++        INFO("This batch requires %d operations", total_read_len * total_hap_len);
++
++        INFO("Current biggest is : %d", biggest);
++#endif
++
++#if FPGA_ACCELERATOR_ENABLED
++        static int initialized = 0;
++        static uint8_t *buffer_ptr[NUMBER_OF_ACCELERATORS] = {NULL};
++	static size_t nth_job = 0;
++
++        int slot_id = 0;
++        int pf_id = 0;
++        int bar_id = 0;
++        int fpga_attach_flags = 0;
++
++        int rc = 0;
++
++        // Initialization section
++        if (!initialized) {
++	    for (int i = 0; i < NUMBER_OF_ACCELERATORS; i++) {
++                semaphores[i] = sem_open(
++                    /* const char *name */ SEMAPHORE_NAMES[i],
++                    /* int oflag */ O_RDWR);
++
++                // TODO : We could allow for partial utilization of accelerators
++                if (semaphores[i] == SEM_FAILED) {
++                    WARN("Failed to open semaphore %s", SEMAPHORE_NAMES[i]);
++                    return false;
++                }
++            }
++
++	    // Mutual exclusion in the initialization section
++	    //int try_wait = sem_trywait(/* sem_t *sem */ semaphores[0]);
++	    //if (try_wait != 0) {
++		// If not initialized and the semahore is 0 someone is initializing,
++		// return false so to compute this batch on CPU while initialization finishes.
++	        //return false;
++	    //}
++
++            for (size_t i = 0; i < NUMBER_OF_ACCELERATORS; i++) {
++                buffer_ptr[i] = initialize_buffer();
++
++                if (buffer_ptr == NULL) {
++                    WARN("Failed to allocate buffer for DMA to FPGA");
++                    initialized = false;
++                    return false; // Do computation on CPU
++                }
++            }
++
++            /* initialize the fpga_plat library */
++            //WARN("CALL TO THE FPGA MGMT LIBRARY INIT !");
++            rc = fpga_mgmt_init();
++            if (rc) {
++                WARN("Failed to initialize the FPGA management library");
++                return false;
++            }
++
++            // Attach the FPGA
++            shacc_pairhmm::pci_bar_handle = PCI_BAR_HANDLE_INIT;
++            rc = fpga_pci_attach(slot_id, pf_id, bar_id, fpga_attach_flags, &(shacc_pairhmm::pci_bar_handle));
++            if (rc) {
++                WARN("Unable to attach to the AFI on slot id %d", slot_id);
++                return false;
++            }
++
++            initialized = true;
++
++	    // Release first semaphore
++	    //sem_post(semaphores[0]);
++        }
++
++        // Set rc so that if no accelerator could be used the function returns false
++        rc = -1;
++        // Try to get an accelerator and do the computation on it
++        for (size_t i = 0; i < NUMBER_OF_ACCELERATORS; i++) {
++            if (semaphores[i]) {
++                int try_wait = sem_trywait(/* sem_t *sem */ semaphores[i]);
++
++                if (try_wait == 0) {
++#if PRINT_SEMAPHORE
++                    INFO("got semaphore %s", SEMAPHORE_NAMES[i]);
++#endif
++                    rc = pairhmm_on_fpga(batch, buffer_ptr[i], i);
++#if PRINT_SEMAPHORE
++                    INFO("released semaphore %s", SEMAPHORE_NAMES[i]);
++#endif
++                    sem_post(semaphores[i]);
++                    // Computation is done, we don't have to try another accelerator
++                    break;
++                }
++            }
++        }
++
++	nth_job++;
++#if STOP_JOB
++	if (nth_job == STOP_JOB)
++            for(;;);
++#endif
++	if (rc)
++	    WARN("PairHMM on FPGA failed !");
++        return rc ? false : true;
++#endif
++
++        // return false so batch will be computed on the CPU
++        return false;
++    }
+ 
+ }

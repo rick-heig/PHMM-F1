@@ -1,0 +1,1 @@
+make C_TEST=test_dram_dma_hwsw_cosim QUESTA=1

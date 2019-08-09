@@ -1,0 +1,18 @@
+diff --git a/build.gradle b/build.gradle
+index 1370023..15e7ba0 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -315,9 +315,10 @@ dependencies {
+     // Dependency change for including MLLib
+     compile('com.esotericsoftware:reflectasm:1.10.0:shaded')
+ 
+-    compile('com.intel.gkl:gkl:0.8.6') {
+-        exclude module: 'htsjdk'
+-    }
++    compile files("../GKL/build/classes/main")
++    //compile('com.intel.gkl:gkl:0.8.6') {
++    //    exclude module: 'htsjdk'
++    //}
+ 
+     compile 'org.broadinstitute:gatk-bwamem-jni:1.0.4'
+     compile 'org.broadinstitute:gatk-fermilite-jni:1.2.0'

@@ -1,0 +1,300 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<EDKSYSTEM EDWVERSION="1.2" TIMESTAMP="Tue May  7 15:39:30 2019" VIVADOVERSION="2017.4">
+
+  <SYSTEMINFO ARCH="virtexuplus" DEVICE="xcvu9p" NAME="floating_point_sum" PACKAGE="flgb2104" SPEEDGRADE="-2"/>
+
+  <EXTERNALPORTS>
+    <PORT DIR="O" LEFT="31" NAME="M_AXIS_SUM_RESULT_tdata" RIGHT="0" SIGIS="undef"/>
+    <PORT DIR="I" NAME="M_AXIS_SUM_RESULT_tready" SIGIS="undef"/>
+    <PORT DIR="O" LEFT="7" NAME="M_AXIS_SUM_RESULT_tuser" RIGHT="0" SIGIS="undef"/>
+    <PORT DIR="O" NAME="M_AXIS_SUM_RESULT_tvalid" SIGIS="undef"/>
+    <PORT DIR="I" LEFT="31" NAME="S_AXIS_A_tdata" RIGHT="0" SIGIS="undef"/>
+    <PORT DIR="O" NAME="S_AXIS_A_tready" SIGIS="undef"/>
+    <PORT DIR="I" LEFT="7" NAME="S_AXIS_A_tuser" RIGHT="0" SIGIS="undef"/>
+    <PORT DIR="I" NAME="S_AXIS_A_tvalid" SIGIS="undef"/>
+    <PORT DIR="I" LEFT="31" NAME="S_AXIS_B_tdata" RIGHT="0" SIGIS="undef"/>
+    <PORT DIR="O" NAME="S_AXIS_B_tready" SIGIS="undef"/>
+    <PORT DIR="I" NAME="S_AXIS_B_tvalid" SIGIS="undef"/>
+    <PORT CLKFREQUENCY="10000000" DIR="I" NAME="aclk" SIGIS="clk" SIGNAME="External_Ports_aclk">
+      <CONNECTIONS>
+        <CONNECTION INSTANCE="floating_point_sum_0" PORT="aclk"/>
+      </CONNECTIONS>
+    </PORT>
+    <PORT DIR="I" NAME="aresetn" SIGIS="rst" SIGNAME="External_Ports_aresetn">
+      <CONNECTIONS>
+        <CONNECTION INSTANCE="floating_point_sum_0" PORT="aresetn"/>
+      </CONNECTIONS>
+    </PORT>
+  </EXTERNALPORTS>
+
+  <EXTERNALINTERFACES>
+    <BUSINTERFACE BUSNAME="floating_point_sum_0_M_AXIS_RESULT" NAME="M_AXIS_SUM_RESULT" TYPE="INITIATOR">
+      <PARAMETER NAME="TDATA_NUM_BYTES" VALUE="4"/>
+      <PARAMETER NAME="TDEST_WIDTH" VALUE="0"/>
+      <PARAMETER NAME="TID_WIDTH" VALUE="0"/>
+      <PARAMETER NAME="TUSER_WIDTH" VALUE="8"/>
+      <PARAMETER NAME="HAS_TREADY" VALUE="1"/>
+      <PARAMETER NAME="HAS_TSTRB" VALUE="0"/>
+      <PARAMETER NAME="HAS_TKEEP" VALUE="0"/>
+      <PARAMETER NAME="HAS_TLAST" VALUE="0"/>
+      <PARAMETER NAME="FREQ_HZ" VALUE="10000000"/>
+      <PARAMETER NAME="PHASE" VALUE="0.000"/>
+      <PARAMETER NAME="CLK_DOMAIN" VALUE="floating_point_sum_aclk"/>
+      <PARAMETER NAME="LAYERED_METADATA" VALUE="xilinx.com:interface:datatypes:1.0 {TDATA {datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value data} bitwidth {attribs {resolve_type generated dependency width format long minimum {} maximum {}} value 32} bitoffset {attribs {resolve_type immediate dependency {} format long minimum {} maximum {}} value 0} real {float {sigwidth {attribs {resolve_type generated dependency fractwidth format long minimum {} maximum {}} value 24}}}}} TDATA_WIDTH 32 TUSER {datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type automatic dependency {} format long minimum {} maximum {}} value 8} bitoffset {attribs {resolve_type immediate dependency {} format long minimum {} maximum {}} value 0} struct {field_underflow {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value underflow} enabled {attribs {resolve_type generated dependency underflow_enabled format bool minimum {} maximum {}} value false} datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type generated dependency underflow_bitwidth format long minimum {} maximum {}} value 0} bitoffset {attribs {resolve_type immediate dependency {} format long minimum {} maximum {}} value 0}}} field_overflow {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value overflow} enabled {attribs {resolve_type generated dependency overflow_enabled format bool minimum {} maximum {}} value false} datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type generated dependency overflow_bitwidth format long minimum {} maximum {}} value 0} bitoffset {attribs {resolve_type generated dependency overflow_bitoffset format long minimum {} maximum {}} value 0}}} field_invalid_op {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value invalid_op} enabled {attribs {resolve_type generated dependency invalid_op_enabled format bool minimum {} maximum {}} value false} datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type generated dependency invalid_op_bitwidth format long minimum {} maximum {}} value 0} bitoffset {attribs {resolve_type generated dependency invalid_op_bitoffset format long minimum {} maximum {}} value 0}}} field_div_by_zero {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value div_by_zero} enabled {attribs {resolve_type generated dependency div_by_zero_enabled format bool minimum {} maximum {}} value false} datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type generated dependency div_by_zero_bitwidth format long minimum {} maximum {}} value 0} bitoffset {attribs {resolve_type generated dependency div_by_zero_bitoffset format long minimum {} maximum {}} value 0}}} field_accum_input_overflow {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value accum_input_overflow} enabled {attribs {resolve_type generated dependency accum_input_overflow_enabled format bool minimum {} maximum {}} value false} datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type generated dependency accum_input_overflow_bitwidth format long minimum {} maximum {}} value 0} bitoffset {attribs {resolve_type generated dependency accum_input_overflow_bitoffset format long minimum {} maximum {}} value 0}}} field_accum_overflow {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value accum_overflow} enabled {attribs {resolve_type generated dependency accum_overflow_enabled format bool minimum {} maximum {}} value false} datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type generated dependency accum_overflow_bitwidth format long minimum {} maximum {}} value 0} bitoffset {attribs {resolve_type generated dependency accum_overflow_bitoffset format long minimum {} maximum {}} value 0}}} field_a_tuser {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value a_tuser} enabled {attribs {resolve_type generated dependency a_tuser_enabled format bool minimum {} maximum {}} value true} datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type generated dependency a_tuser_bitwidth format long minimum {} maximum {}} value 8} bitoffset {attribs {resolve_type generated dependency a_tuser_bitoffset format long minimum {} maximum {}} value 0}}} field_b_tuser {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value b_tuser} enabled {attribs {resolve_type generated dependency b_tuser_enabled format bool minimum {} maximum {}} value false} datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type generated dependency b_tuser_bitwidth format long minimum {} maximum {}} value 0} bitoffset {attribs {resolve_type generated dependency b_tuser_bitoffset format long minimum {} maximum {}} value 8}}} field_c_tuser {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value c_tuser} enabled {attribs {resolve_type generated dependency c_tuser_enabled format bool minimum {} maximum {}} value false} datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type generated dependency c_tuser_bitwidth format long minimum {} maximum {}} value 0} bitoffset {attribs {resolve_type generated dependency c_tuser_bitoffset format long minimum {} maximum {}} value 8}}} field_operation_tuser {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value operation_tuser} enabled {attribs {resolve_type generated dependency operation_tuser_enabled format bool minimum {} maximum {}} value false} datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type generated dependency operation_tuser_bitwidth format long minimum {} maximum {}} value 0} bitoffset {attribs {resolve_type generated dependency operation_tuser_bitoffset format long minimum {} maximum {}} value 8}}}}}} TUSER_WIDTH 8}"/>
+      <PORTMAPS>
+        <PORTMAP LOGICAL="TDATA" PHYSICAL="M_AXIS_SUM_RESULT_tdata"/>
+        <PORTMAP LOGICAL="TREADY" PHYSICAL="M_AXIS_SUM_RESULT_tready"/>
+        <PORTMAP LOGICAL="TUSER" PHYSICAL="M_AXIS_SUM_RESULT_tuser"/>
+        <PORTMAP LOGICAL="TVALID" PHYSICAL="M_AXIS_SUM_RESULT_tvalid"/>
+      </PORTMAPS>
+    </BUSINTERFACE>
+    <BUSINTERFACE BUSNAME="External_Interface_S_AXIS_A" NAME="S_AXIS_A" TYPE="TARGET">
+      <PARAMETER NAME="TDATA_NUM_BYTES" VALUE="4"/>
+      <PARAMETER NAME="TDEST_WIDTH" VALUE="0"/>
+      <PARAMETER NAME="TID_WIDTH" VALUE="0"/>
+      <PARAMETER NAME="TUSER_WIDTH" VALUE="8"/>
+      <PARAMETER NAME="HAS_TREADY" VALUE="1"/>
+      <PARAMETER NAME="HAS_TSTRB" VALUE="0"/>
+      <PARAMETER NAME="HAS_TKEEP" VALUE="0"/>
+      <PARAMETER NAME="HAS_TLAST" VALUE="0"/>
+      <PARAMETER NAME="FREQ_HZ" VALUE="10000000"/>
+      <PARAMETER NAME="PHASE" VALUE="0.000"/>
+      <PARAMETER NAME="CLK_DOMAIN" VALUE="floating_point_sum_aclk"/>
+      <PARAMETER NAME="LAYERED_METADATA" VALUE="undef"/>
+      <PORTMAPS>
+        <PORTMAP LOGICAL="TDATA" PHYSICAL="S_AXIS_A_tdata"/>
+        <PORTMAP LOGICAL="TREADY" PHYSICAL="S_AXIS_A_tready"/>
+        <PORTMAP LOGICAL="TUSER" PHYSICAL="S_AXIS_A_tuser"/>
+        <PORTMAP LOGICAL="TVALID" PHYSICAL="S_AXIS_A_tvalid"/>
+      </PORTMAPS>
+    </BUSINTERFACE>
+    <BUSINTERFACE BUSNAME="External_Interface_S_AXIS_B" NAME="S_AXIS_B" TYPE="TARGET">
+      <PARAMETER NAME="TDATA_NUM_BYTES" VALUE="4"/>
+      <PARAMETER NAME="TDEST_WIDTH" VALUE="0"/>
+      <PARAMETER NAME="TID_WIDTH" VALUE="0"/>
+      <PARAMETER NAME="TUSER_WIDTH" VALUE="0"/>
+      <PARAMETER NAME="HAS_TREADY" VALUE="1"/>
+      <PARAMETER NAME="HAS_TSTRB" VALUE="0"/>
+      <PARAMETER NAME="HAS_TKEEP" VALUE="0"/>
+      <PARAMETER NAME="HAS_TLAST" VALUE="0"/>
+      <PARAMETER NAME="FREQ_HZ" VALUE="10000000"/>
+      <PARAMETER NAME="PHASE" VALUE="0.000"/>
+      <PARAMETER NAME="CLK_DOMAIN" VALUE="floating_point_sum_aclk"/>
+      <PARAMETER NAME="LAYERED_METADATA" VALUE="undef"/>
+      <PORTMAPS>
+        <PORTMAP LOGICAL="TDATA" PHYSICAL="S_AXIS_B_tdata"/>
+        <PORTMAP LOGICAL="TREADY" PHYSICAL="S_AXIS_B_tready"/>
+        <PORTMAP LOGICAL="TVALID" PHYSICAL="S_AXIS_B_tvalid"/>
+      </PORTMAPS>
+    </BUSINTERFACE>
+  </EXTERNALINTERFACES>
+
+  <MODULES>
+    <MODULE FULLNAME="/floating_point_sum_0" HWVERSION="7.1" INSTANCE="floating_point_sum_0" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="floating_point" VLNV="xilinx.com:ip:floating_point:7.1">
+      <DOCUMENTS>
+        <DOCUMENT SOURCE="http://www.xilinx.com/cgi-bin/docs/ipdoc?c=floating_point;v=v7_1;d=pg060-floating-point.pdf"/>
+      </DOCUMENTS>
+      <PARAMETERS>
+        <PARAMETER NAME="C_XDEVICEFAMILY" VALUE="virtexuplus"/>
+        <PARAMETER NAME="C_HAS_ADD" VALUE="1"/>
+        <PARAMETER NAME="C_HAS_SUBTRACT" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_MULTIPLY" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_DIVIDE" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_SQRT" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_COMPARE" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_FIX_TO_FLT" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_FLT_TO_FIX" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_FLT_TO_FLT" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_RECIP" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_RECIP_SQRT" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_ABSOLUTE" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_LOGARITHM" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_EXPONENTIAL" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_FMA" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_FMS" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_ACCUMULATOR_A" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_ACCUMULATOR_S" VALUE="0"/>
+        <PARAMETER NAME="C_A_WIDTH" VALUE="32"/>
+        <PARAMETER NAME="C_A_FRACTION_WIDTH" VALUE="24"/>
+        <PARAMETER NAME="C_B_WIDTH" VALUE="32"/>
+        <PARAMETER NAME="C_B_FRACTION_WIDTH" VALUE="24"/>
+        <PARAMETER NAME="C_C_WIDTH" VALUE="32"/>
+        <PARAMETER NAME="C_C_FRACTION_WIDTH" VALUE="24"/>
+        <PARAMETER NAME="C_RESULT_WIDTH" VALUE="32"/>
+        <PARAMETER NAME="C_RESULT_FRACTION_WIDTH" VALUE="24"/>
+        <PARAMETER NAME="C_COMPARE_OPERATION" VALUE="8"/>
+        <PARAMETER NAME="C_LATENCY" VALUE="12"/>
+        <PARAMETER NAME="C_OPTIMIZATION" VALUE="1"/>
+        <PARAMETER NAME="C_MULT_USAGE" VALUE="1"/>
+        <PARAMETER NAME="C_BRAM_USAGE" VALUE="0"/>
+        <PARAMETER NAME="C_RATE" VALUE="1"/>
+        <PARAMETER NAME="C_ACCUM_INPUT_MSB" VALUE="32"/>
+        <PARAMETER NAME="C_ACCUM_MSB" VALUE="32"/>
+        <PARAMETER NAME="C_ACCUM_LSB" VALUE="-31"/>
+        <PARAMETER NAME="C_HAS_UNDERFLOW" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_OVERFLOW" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_INVALID_OP" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_DIVIDE_BY_ZERO" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_ACCUM_OVERFLOW" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_ACCUM_INPUT_OVERFLOW" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_ACLKEN" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_ARESETN" VALUE="1"/>
+        <PARAMETER NAME="C_THROTTLE_SCHEME" VALUE="1"/>
+        <PARAMETER NAME="C_HAS_A_TUSER" VALUE="1"/>
+        <PARAMETER NAME="C_HAS_A_TLAST" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_B" VALUE="1"/>
+        <PARAMETER NAME="C_HAS_B_TUSER" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_B_TLAST" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_C" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_C_TUSER" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_C_TLAST" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_OPERATION" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_OPERATION_TUSER" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_OPERATION_TLAST" VALUE="0"/>
+        <PARAMETER NAME="C_HAS_RESULT_TUSER" VALUE="1"/>
+        <PARAMETER NAME="C_HAS_RESULT_TLAST" VALUE="0"/>
+        <PARAMETER NAME="C_TLAST_RESOLUTION" VALUE="0"/>
+        <PARAMETER NAME="C_A_TDATA_WIDTH" VALUE="32"/>
+        <PARAMETER NAME="C_A_TUSER_WIDTH" VALUE="8"/>
+        <PARAMETER NAME="C_B_TDATA_WIDTH" VALUE="32"/>
+        <PARAMETER NAME="C_B_TUSER_WIDTH" VALUE="1"/>
+        <PARAMETER NAME="C_C_TDATA_WIDTH" VALUE="32"/>
+        <PARAMETER NAME="C_C_TUSER_WIDTH" VALUE="1"/>
+        <PARAMETER NAME="C_OPERATION_TDATA_WIDTH" VALUE="8"/>
+        <PARAMETER NAME="C_OPERATION_TUSER_WIDTH" VALUE="1"/>
+        <PARAMETER NAME="C_RESULT_TDATA_WIDTH" VALUE="32"/>
+        <PARAMETER NAME="C_RESULT_TUSER_WIDTH" VALUE="8"/>
+        <PARAMETER NAME="C_FIXED_DATA_UNSIGNED" VALUE="0"/>
+        <PARAMETER NAME="Component_Name" VALUE="floating_point_sum_floating_point_sum_0_0"/>
+        <PARAMETER NAME="Operation_Type" VALUE="Add_Subtract"/>
+        <PARAMETER NAME="Add_Sub_Value" VALUE="Add"/>
+        <PARAMETER NAME="C_Compare_Operation" VALUE="Programmable"/>
+        <PARAMETER NAME="A_Precision_Type" VALUE="Single"/>
+        <PARAMETER NAME="C_A_Exponent_Width" VALUE="8"/>
+        <PARAMETER NAME="C_A_Fraction_Width" VALUE="24"/>
+        <PARAMETER NAME="Result_Precision_Type" VALUE="Single"/>
+        <PARAMETER NAME="C_Result_Exponent_Width" VALUE="8"/>
+        <PARAMETER NAME="C_Result_Fraction_Width" VALUE="24"/>
+        <PARAMETER NAME="C_Accum_Msb" VALUE="32"/>
+        <PARAMETER NAME="C_Accum_Lsb" VALUE="-31"/>
+        <PARAMETER NAME="C_Accum_Input_Msb" VALUE="32"/>
+        <PARAMETER NAME="C_Optimization" VALUE="Speed_Optimized"/>
+        <PARAMETER NAME="C_Mult_Usage" VALUE="Medium_Usage"/>
+        <PARAMETER NAME="C_BRAM_Usage" VALUE="No_Usage"/>
+        <PARAMETER NAME="Flow_Control" VALUE="Blocking"/>
+        <PARAMETER NAME="Axi_Optimize_Goal" VALUE="Resources"/>
+        <PARAMETER NAME="Has_RESULT_TREADY" VALUE="true"/>
+        <PARAMETER NAME="Maximum_Latency" VALUE="true"/>
+        <PARAMETER NAME="C_Latency" VALUE="12"/>
+        <PARAMETER NAME="C_Rate" VALUE="1"/>
+        <PARAMETER NAME="Has_ACLKEN" VALUE="false"/>
+        <PARAMETER NAME="Has_ARESETn" VALUE="true"/>
+        <PARAMETER NAME="C_Has_UNDERFLOW" VALUE="false"/>
+        <PARAMETER NAME="C_Has_OVERFLOW" VALUE="false"/>
+        <PARAMETER NAME="C_Has_INVALID_OP" VALUE="false"/>
+        <PARAMETER NAME="C_Has_DIVIDE_BY_ZERO" VALUE="false"/>
+        <PARAMETER NAME="C_Has_ACCUM_OVERFLOW" VALUE="false"/>
+        <PARAMETER NAME="C_Has_ACCUM_INPUT_OVERFLOW" VALUE="false"/>
+        <PARAMETER NAME="Has_A_TLAST" VALUE="false"/>
+        <PARAMETER NAME="Has_A_TUSER" VALUE="true"/>
+        <PARAMETER NAME="A_TUSER_Width" VALUE="8"/>
+        <PARAMETER NAME="Has_B_TLAST" VALUE="false"/>
+        <PARAMETER NAME="Has_B_TUSER" VALUE="false"/>
+        <PARAMETER NAME="B_TUSER_Width" VALUE="1"/>
+        <PARAMETER NAME="Has_C_TLAST" VALUE="false"/>
+        <PARAMETER NAME="Has_C_TUSER" VALUE="false"/>
+        <PARAMETER NAME="C_TUSER_Width" VALUE="1"/>
+        <PARAMETER NAME="Has_OPERATION_TLAST" VALUE="false"/>
+        <PARAMETER NAME="Has_OPERATION_TUSER" VALUE="false"/>
+        <PARAMETER NAME="OPERATION_TUSER_Width" VALUE="1"/>
+        <PARAMETER NAME="RESULT_TLAST_Behv" VALUE="Null"/>
+        <PARAMETER NAME="EDK_IPTYPE" VALUE="PERIPHERAL"/>
+      </PARAMETERS>
+      <PORTS>
+        <PORT CLKFREQUENCY="10000000" DIR="I" NAME="aclk" SIGIS="clk" SIGNAME="External_Ports_aclk">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="External_Ports" PORT="aclk"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="I" NAME="aresetn" SIGIS="rst" SIGNAME="External_Ports_aresetn">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="External_Ports" PORT="aresetn"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="I" NAME="s_axis_a_tvalid" SIGIS="undef"/>
+        <PORT DIR="O" NAME="s_axis_a_tready" SIGIS="undef"/>
+        <PORT DIR="I" LEFT="31" NAME="s_axis_a_tdata" RIGHT="0" SIGIS="undef"/>
+        <PORT DIR="I" LEFT="7" NAME="s_axis_a_tuser" RIGHT="0" SIGIS="undef"/>
+        <PORT DIR="I" NAME="s_axis_b_tvalid" SIGIS="undef"/>
+        <PORT DIR="O" NAME="s_axis_b_tready" SIGIS="undef"/>
+        <PORT DIR="I" LEFT="31" NAME="s_axis_b_tdata" RIGHT="0" SIGIS="undef"/>
+        <PORT DIR="O" NAME="m_axis_result_tvalid" SIGIS="undef"/>
+        <PORT DIR="I" NAME="m_axis_result_tready" SIGIS="undef"/>
+        <PORT DIR="O" LEFT="31" NAME="m_axis_result_tdata" RIGHT="0" SIGIS="undef"/>
+        <PORT DIR="O" LEFT="7" NAME="m_axis_result_tuser" RIGHT="0" SIGIS="undef"/>
+      </PORTS>
+      <BUSINTERFACES>
+        <BUSINTERFACE BUSNAME="External_Interface_S_AXIS_A" NAME="S_AXIS_A" TYPE="TARGET" VLNV="xilinx.com:interface:axis:1.0">
+          <PARAMETER NAME="TDATA_NUM_BYTES" VALUE="4"/>
+          <PARAMETER NAME="TDEST_WIDTH" VALUE="0"/>
+          <PARAMETER NAME="TID_WIDTH" VALUE="0"/>
+          <PARAMETER NAME="TUSER_WIDTH" VALUE="8"/>
+          <PARAMETER NAME="HAS_TREADY" VALUE="1"/>
+          <PARAMETER NAME="HAS_TSTRB" VALUE="0"/>
+          <PARAMETER NAME="HAS_TKEEP" VALUE="0"/>
+          <PARAMETER NAME="HAS_TLAST" VALUE="0"/>
+          <PARAMETER NAME="FREQ_HZ" VALUE="10000000"/>
+          <PARAMETER NAME="PHASE" VALUE="0.000"/>
+          <PARAMETER NAME="CLK_DOMAIN" VALUE="floating_point_sum_aclk"/>
+          <PARAMETER NAME="LAYERED_METADATA" VALUE="undef"/>
+          <PORTMAPS>
+            <PORTMAP LOGICAL="TDATA" PHYSICAL="s_axis_a_tdata"/>
+            <PORTMAP LOGICAL="TREADY" PHYSICAL="s_axis_a_tready"/>
+            <PORTMAP LOGICAL="TUSER" PHYSICAL="s_axis_a_tuser"/>
+            <PORTMAP LOGICAL="TVALID" PHYSICAL="s_axis_a_tvalid"/>
+          </PORTMAPS>
+        </BUSINTERFACE>
+        <BUSINTERFACE BUSNAME="External_Interface_S_AXIS_B" NAME="S_AXIS_B" TYPE="TARGET" VLNV="xilinx.com:interface:axis:1.0">
+          <PARAMETER NAME="TDATA_NUM_BYTES" VALUE="4"/>
+          <PARAMETER NAME="TDEST_WIDTH" VALUE="0"/>
+          <PARAMETER NAME="TID_WIDTH" VALUE="0"/>
+          <PARAMETER NAME="TUSER_WIDTH" VALUE="0"/>
+          <PARAMETER NAME="HAS_TREADY" VALUE="1"/>
+          <PARAMETER NAME="HAS_TSTRB" VALUE="0"/>
+          <PARAMETER NAME="HAS_TKEEP" VALUE="0"/>
+          <PARAMETER NAME="HAS_TLAST" VALUE="0"/>
+          <PARAMETER NAME="FREQ_HZ" VALUE="10000000"/>
+          <PARAMETER NAME="PHASE" VALUE="0.000"/>
+          <PARAMETER NAME="CLK_DOMAIN" VALUE="floating_point_sum_aclk"/>
+          <PARAMETER NAME="LAYERED_METADATA" VALUE="undef"/>
+          <PORTMAPS>
+            <PORTMAP LOGICAL="TDATA" PHYSICAL="s_axis_b_tdata"/>
+            <PORTMAP LOGICAL="TREADY" PHYSICAL="s_axis_b_tready"/>
+            <PORTMAP LOGICAL="TVALID" PHYSICAL="s_axis_b_tvalid"/>
+          </PORTMAPS>
+        </BUSINTERFACE>
+        <BUSINTERFACE BUSNAME="floating_point_sum_0_M_AXIS_RESULT" NAME="M_AXIS_RESULT" TYPE="INITIATOR" VLNV="xilinx.com:interface:axis:1.0">
+          <PARAMETER NAME="TDATA_NUM_BYTES" VALUE="4"/>
+          <PARAMETER NAME="TDEST_WIDTH" VALUE="0"/>
+          <PARAMETER NAME="TID_WIDTH" VALUE="0"/>
+          <PARAMETER NAME="TUSER_WIDTH" VALUE="8"/>
+          <PARAMETER NAME="HAS_TREADY" VALUE="1"/>
+          <PARAMETER NAME="HAS_TSTRB" VALUE="0"/>
+          <PARAMETER NAME="HAS_TKEEP" VALUE="0"/>
+          <PARAMETER NAME="HAS_TLAST" VALUE="0"/>
+          <PARAMETER NAME="FREQ_HZ" VALUE="10000000"/>
+          <PARAMETER NAME="PHASE" VALUE="0.000"/>
+          <PARAMETER NAME="CLK_DOMAIN" VALUE="floating_point_sum_aclk"/>
+          <PARAMETER NAME="LAYERED_METADATA" VALUE="xilinx.com:interface:datatypes:1.0 {TDATA {datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value data} bitwidth {attribs {resolve_type generated dependency width format long minimum {} maximum {}} value 32} bitoffset {attribs {resolve_type immediate dependency {} format long minimum {} maximum {}} value 0} real {float {sigwidth {attribs {resolve_type generated dependency fractwidth format long minimum {} maximum {}} value 24}}}}} TDATA_WIDTH 32 TUSER {datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type automatic dependency {} format long minimum {} maximum {}} value 8} bitoffset {attribs {resolve_type immediate dependency {} format long minimum {} maximum {}} value 0} struct {field_underflow {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value underflow} enabled {attribs {resolve_type generated dependency underflow_enabled format bool minimum {} maximum {}} value false} datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type generated dependency underflow_bitwidth format long minimum {} maximum {}} value 0} bitoffset {attribs {resolve_type immediate dependency {} format long minimum {} maximum {}} value 0}}} field_overflow {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value overflow} enabled {attribs {resolve_type generated dependency overflow_enabled format bool minimum {} maximum {}} value false} datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type generated dependency overflow_bitwidth format long minimum {} maximum {}} value 0} bitoffset {attribs {resolve_type generated dependency overflow_bitoffset format long minimum {} maximum {}} value 0}}} field_invalid_op {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value invalid_op} enabled {attribs {resolve_type generated dependency invalid_op_enabled format bool minimum {} maximum {}} value false} datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type generated dependency invalid_op_bitwidth format long minimum {} maximum {}} value 0} bitoffset {attribs {resolve_type generated dependency invalid_op_bitoffset format long minimum {} maximum {}} value 0}}} field_div_by_zero {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value div_by_zero} enabled {attribs {resolve_type generated dependency div_by_zero_enabled format bool minimum {} maximum {}} value false} datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type generated dependency div_by_zero_bitwidth format long minimum {} maximum {}} value 0} bitoffset {attribs {resolve_type generated dependency div_by_zero_bitoffset format long minimum {} maximum {}} value 0}}} field_accum_input_overflow {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value accum_input_overflow} enabled {attribs {resolve_type generated dependency accum_input_overflow_enabled format bool minimum {} maximum {}} value false} datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type generated dependency accum_input_overflow_bitwidth format long minimum {} maximum {}} value 0} bitoffset {attribs {resolve_type generated dependency accum_input_overflow_bitoffset format long minimum {} maximum {}} value 0}}} field_accum_overflow {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value accum_overflow} enabled {attribs {resolve_type generated dependency accum_overflow_enabled format bool minimum {} maximum {}} value false} datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type generated dependency accum_overflow_bitwidth format long minimum {} maximum {}} value 0} bitoffset {attribs {resolve_type generated dependency accum_overflow_bitoffset format long minimum {} maximum {}} value 0}}} field_a_tuser {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value a_tuser} enabled {attribs {resolve_type generated dependency a_tuser_enabled format bool minimum {} maximum {}} value true} datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type generated dependency a_tuser_bitwidth format long minimum {} maximum {}} value 8} bitoffset {attribs {resolve_type generated dependency a_tuser_bitoffset format long minimum {} maximum {}} value 0}}} field_b_tuser {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value b_tuser} enabled {attribs {resolve_type generated dependency b_tuser_enabled format bool minimum {} maximum {}} value false} datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type generated dependency b_tuser_bitwidth format long minimum {} maximum {}} value 0} bitoffset {attribs {resolve_type generated dependency b_tuser_bitoffset format long minimum {} maximum {}} value 8}}} field_c_tuser {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value c_tuser} enabled {attribs {resolve_type generated dependency c_tuser_enabled format bool minimum {} maximum {}} value false} datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type generated dependency c_tuser_bitwidth format long minimum {} maximum {}} value 0} bitoffset {attribs {resolve_type generated dependency c_tuser_bitoffset format long minimum {} maximum {}} value 8}}} field_operation_tuser {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value operation_tuser} enabled {attribs {resolve_type generated dependency operation_tuser_enabled format bool minimum {} maximum {}} value false} datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type generated dependency operation_tuser_bitwidth format long minimum {} maximum {}} value 0} bitoffset {attribs {resolve_type generated dependency operation_tuser_bitoffset format long minimum {} maximum {}} value 8}}}}}} TUSER_WIDTH 8}"/>
+          <PORTMAPS>
+            <PORTMAP LOGICAL="TDATA" PHYSICAL="m_axis_result_tdata"/>
+            <PORTMAP LOGICAL="TREADY" PHYSICAL="m_axis_result_tready"/>
+            <PORTMAP LOGICAL="TUSER" PHYSICAL="m_axis_result_tuser"/>
+            <PORTMAP LOGICAL="TVALID" PHYSICAL="m_axis_result_tvalid"/>
+          </PORTMAPS>
+        </BUSINTERFACE>
+      </BUSINTERFACES>
+    </MODULE>
+  </MODULES>
+
+</EDKSYSTEM>
