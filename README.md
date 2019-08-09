@@ -29,7 +29,7 @@ Pre-generated images are available on AWS with the following IDs. (Available onl
 ```
 
 ## GATK
-In order to use the accelerator in GATK, GATK requires to be recompiled with a modified version of the Intel Genomic Kernel Library (GKL).
+In order to use the accelerator in [GATK](https://software.broadinstitute.org/gatk/), GATK requires to be recompiled with a modified version of the [Intel Genomic Kernel Library (GKL)](https://github.com/Intel-HLS/GKL).
 
 ### Modified GKL
 This uses a modified version of the Intel Genomic Kernel Library that will call the accelerator.
@@ -64,7 +64,7 @@ Once compiled and the tests passed it can be used to compile GATK.
 ### Compile GATK
 From the base directory
 
-Clone GATK and checkout the last version for which this has been tested (newer versions probably work but are not guaranteed to). Also apply the patch that will use the modified GKL instead of the current GKL.
+Clone [GATK](https://github.com/broadinstitute/gatk) and checkout the last version for which this has been tested (newer versions probably work but are not guaranteed to). Also apply the patch that will use the modified GKL instead of the current GKL.
 
 ```
 git clone https://github.com/broadinstitute/gatk.git
