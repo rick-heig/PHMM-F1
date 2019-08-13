@@ -13,7 +13,7 @@ Date (YMD)  : 2019 07 08
 
 Description : This programm will show the values of the semaphores
 
-Compile with : gcc -o print_sems print_sems.c -pthread
+Compile with : gcc -o print_sems print_sems.c -std=gnu99 -pthread
 
 */
 

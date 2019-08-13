@@ -66,34 +66,36 @@ The following commands were used for the benchmarks. The logs are in the `logs` 
 ```
 
 ## OpenMP 4t + FPGA 24w
+Note : The `sudo LD_PRELOAD="PATH/TO/GKL/.../libgkl_pairhmm_shacc.so /usr/local/lib64/libfpga_mgmt.so"` is ommitted in the commands below for readability
+
 ```
-source fpga/fpga_loading_script.sh agfi-08b44cb4440d82d3e
+./fpga/fpga_loading_script.sh agfi-08b44cb4440d82d3e
 
-/home/centos/src/project_data/gatk/gatk HaplotypeCaller -R Homo_sapiens_assembly18.fasta -I NA12878.ga2.exome.maq.raw.sorted.bam -O call.vcf -L chr1 --smith-waterman AVX_ENABLED --pairHMM EXPERIMENTAL_FPGA_LOGLESS_CACHING --native-pair-hmm-threads 4 &> omp4t_FPGA24w_chr1.log
+/home/centos/src/project_data/PHMM-F1/gatk/gatk HaplotypeCaller -R Homo_sapiens_assembly18.fasta -I NA12878.ga2.exome.maq.raw.sorted.bam -O call.vcf -L chr1 --smith-waterman AVX_ENABLED --pairHMM EXPERIMENTAL_FPGA_LOGLESS_CACHING --native-pair-hmm-threads 4 &> omp4t_FPGA24w_chr1.log
 
-/home/centos/src/project_data/gatk/gatk HaplotypeCaller -R Homo_sapiens_assembly18.fasta -I NA12878.ga2.exome.maq.raw.sorted.bam -O call.vcf -L chr2 --smith-waterman AVX_ENABLED --pairHMM EXPERIMENTAL_FPGA_LOGLESS_CACHING --native-pair-hmm-threads 4 &> omp4t_FPGA24w_chr2.log
+/home/centos/src/project_data/PHMM-F1/gatk/gatk HaplotypeCaller -R Homo_sapiens_assembly18.fasta -I NA12878.ga2.exome.maq.raw.sorted.bam -O call.vcf -L chr2 --smith-waterman AVX_ENABLED --pairHMM EXPERIMENTAL_FPGA_LOGLESS_CACHING --native-pair-hmm-threads 4 &> omp4t_FPGA24w_chr2.log
 
-/home/centos/src/project_data/gatk/gatk HaplotypeCaller -R Homo_sapiens_assembly18.fasta -I NA12878.ga2.exome.maq.raw.sorted.bam -O call.vcf -L chr3 --smith-waterman AVX_ENABLED --pairHMM EXPERIMENTAL_FPGA_LOGLESS_CACHING --native-pair-hmm-threads 4 &> omp4t_FPGA24w_chr3.log
+/home/centos/src/project_data/PHMM-F1/gatk/gatk HaplotypeCaller -R Homo_sapiens_assembly18.fasta -I NA12878.ga2.exome.maq.raw.sorted.bam -O call.vcf -L chr3 --smith-waterman AVX_ENABLED --pairHMM EXPERIMENTAL_FPGA_LOGLESS_CACHING --native-pair-hmm-threads 4 &> omp4t_FPGA24w_chr3.log
 ```
 
 ## OpenMP 4t + FPGA 96w
 ```
-source fpga/fpga_loading_script.sh agfi-08b44cb4440d82d3e agfi-003c75629c2a7f3bf
+./fpga/fpga_loading_script.sh agfi-08b44cb4440d82d3e agfi-003c75629c2a7f3bf
 
-/home/centos/src/project_data/gatk/gatk HaplotypeCaller -R Homo_sapiens_assembly18.fasta -I NA12878.ga2.exome.maq.raw.sorted.bam -O call.vcf -L chr1 --smith-waterman AVX_ENABLED --pairHMM EXPERIMENTAL_FPGA_LOGLESS_CACHING --native-pair-hmm-threads 4 &> omp4t_FPGA96w_chr1.log
+/home/centos/src/project_data/PHMM-F1/gatk/gatk HaplotypeCaller -R Homo_sapiens_assembly18.fasta -I NA12878.ga2.exome.maq.raw.sorted.bam -O call.vcf -L chr1 --smith-waterman AVX_ENABLED --pairHMM EXPERIMENTAL_FPGA_LOGLESS_CACHING --native-pair-hmm-threads 4 &> omp4t_FPGA96w_chr1.log
 
-/home/centos/src/project_data/gatk/gatk HaplotypeCaller -R Homo_sapiens_assembly18.fasta -I NA12878.ga2.exome.maq.raw.sorted.bam -O call.vcf -L chr2 --smith-waterman AVX_ENABLED --pairHMM EXPERIMENTAL_FPGA_LOGLESS_CACHING --native-pair-hmm-threads 4 &> omp4t_FPGA96w_chr2.log
+/home/centos/src/project_data/PHMM-F1/gatk/gatk HaplotypeCaller -R Homo_sapiens_assembly18.fasta -I NA12878.ga2.exome.maq.raw.sorted.bam -O call.vcf -L chr2 --smith-waterman AVX_ENABLED --pairHMM EXPERIMENTAL_FPGA_LOGLESS_CACHING --native-pair-hmm-threads 4 &> omp4t_FPGA96w_chr2.log
 
-/home/centos/src/project_data/gatk/gatk HaplotypeCaller -R Homo_sapiens_assembly18.fasta -I NA12878.ga2.exome.maq.raw.sorted.bam -O call.vcf -L chr3 --smith-waterman AVX_ENABLED --pairHMM EXPERIMENTAL_FPGA_LOGLESS_CACHING --native-pair-hmm-threads 4 &> omp4t_FPGA96w_chr3.log
+/home/centos/src/project_data/PHMM-F1/gatk/gatk HaplotypeCaller -R Homo_sapiens_assembly18.fasta -I NA12878.ga2.exome.maq.raw.sorted.bam -O call.vcf -L chr3 --smith-waterman AVX_ENABLED --pairHMM EXPERIMENTAL_FPGA_LOGLESS_CACHING --native-pair-hmm-threads 4 &> omp4t_FPGA96w_chr3.log
 ```
 
 ## Spark 4t + OpenMP 4t + FPGA 4x24w
 ```
-source fpga/fpga_loading_script.sh agfi-08b44cb4440d82d3e
+./fpga/fpga_loading_script.sh agfi-08b44cb4440d82d3e
 
-/home/centos/src/project_data/gatk/gatk HaplotypeCallerSpark --spark-master local[4] -R Homo_sapiens_assembly18.fasta -I NA12878.ga2.exome.maq.raw.sorted.bam -O call.vcf -L chr1 --smith-waterman AVX_ENABLED --pairHMM EXPERIMENTAL_FPGA_LOGLESS_CACHING --native-pair-hmm-threads 4 &> spark4_4_FPGA_4_24_chr1.log
+/home/centos/src/project_data/PHMM-F1/gatk/gatk HaplotypeCallerSpark --spark-master local[4] -R Homo_sapiens_assembly18.fasta -I NA12878.ga2.exome.maq.raw.sorted.bam -O call.vcf -L chr1 --smith-waterman AVX_ENABLED --pairHMM EXPERIMENTAL_FPGA_LOGLESS_CACHING --native-pair-hmm-threads 4 &> spark4_4_FPGA_4_24_chr1.log
 
-/home/centos/src/project_data/gatk/gatk HaplotypeCallerSpark --spark-master local[4] -R Homo_sapiens_assembly18.fasta -I NA12878.ga2.exome.maq.raw.sorted.bam -O call.vcf -L chr2 --smith-waterman AVX_ENABLED --pairHMM EXPERIMENTAL_FPGA_LOGLESS_CACHING --native-pair-hmm-threads 4 &> spark4_4_FPGA_4_24_chr2.log
+/home/centos/src/project_data/PHMM-F1/gatk/gatk HaplotypeCallerSpark --spark-master local[4] -R Homo_sapiens_assembly18.fasta -I NA12878.ga2.exome.maq.raw.sorted.bam -O call.vcf -L chr2 --smith-waterman AVX_ENABLED --pairHMM EXPERIMENTAL_FPGA_LOGLESS_CACHING --native-pair-hmm-threads 4 &> spark4_4_FPGA_4_24_chr2.log
 
-/home/centos/src/project_data/gatk/gatk HaplotypeCallerSpark --spark-master local[4] -R Homo_sapiens_assembly18.fasta -I NA12878.ga2.exome.maq.raw.sorted.bam -O call.vcf -L chr3 --smith-waterman AVX_ENABLED --pairHMM EXPERIMENTAL_FPGA_LOGLESS_CACHING --native-pair-hmm-threads 4 &> spark4_4_FPGA_4_24_chr3.log
+/home/centos/src/project_data/PHMM-F1/gatk/gatk HaplotypeCallerSpark --spark-master local[4] -R Homo_sapiens_assembly18.fasta -I NA12878.ga2.exome.maq.raw.sorted.bam -O call.vcf -L chr3 --smith-waterman AVX_ENABLED --pairHMM EXPERIMENTAL_FPGA_LOGLESS_CACHING --native-pair-hmm-threads 4 &> spark4_4_FPGA_4_24_chr3.log
 ```

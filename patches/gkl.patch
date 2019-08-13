@@ -112,7 +112,7 @@ index 039713f..5242fae 100644
 +  // info computation
    
 +  struct timespec start, end;
-+  clock_gettime(CLOCK_MONOTONIC, &start); 
++  clock_gettime(CLOCK_MONOTONIC, &start);
 +
 +  //clock_t start = clock();
 +#endif
@@ -130,7 +130,7 @@ index 039713f..5242fae 100644
 +    }
    }
 -
-+  
++
  #ifdef _OPENMP
    #pragma omp parallel for schedule(dynamic, 1) num_threads(g_max_threads)
  #endif
@@ -173,7 +173,7 @@ index 039713f..5242fae 100644
 +#endif
    }
  
-+#if PRINT_TIME_DATA  
++#if PRINT_TIME_DATA
 +  //==================================================================
 +  // Print time
 +  //auto finish = std::chrono::high_resolution_clock::now();
@@ -189,7 +189,7 @@ index 039713f..5242fae 100644
 +  //INFO("Num reads : %d, Num haps : %d", env->GetArrayLength(readDataArray), env->GetArrayLength(haplotypeDataArray));
 +  INFO("NH: %d, NR: %d, NO: %llu, Elapsed nanoseconds : %llu", batch.num_haps, batch.num_reads, total_ops, elapsed);
 +#endif
-+  
++
    //==================================================================
    // release Java data
    javaData.releaseData(env);

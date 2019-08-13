@@ -1,10 +1,10 @@
-# How to build and simulate
+# How to build the FPGA image
 
 ## Setting up the Amazon F1 environment from aws-fpga git
 These steps are required to be done only once.
 
 First clone the Amazon FPGA git inside the `fpga` directory, Second checkout and branch version V1.4.8.
-(The project was built using version V1.4.8 never versions may require modifications).
+(The project was built using version V1.4.8 never versions may require modifications). Note that the repository may already have been cloned if the `generate_gatk.sh` has been run.
 
 ```
 git clone https://github.com/aws/aws-fpga.git

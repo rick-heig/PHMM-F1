@@ -15,7 +15,7 @@ Date (YMD)  : 2019 07 08
 Description : This program will create or delete named semaphores.
               They are meant to be tested with the use_sems program.
 
-Compile with : gcc -o create_sems create_sems.c -pthread
+Compile with : gcc -o create_sems create_sems.c -std=gnu99 -pthread
 
 Link with -pthread.
 
