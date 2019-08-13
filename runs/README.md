@@ -80,7 +80,7 @@ Note : The `sudo LD_PRELOAD="PATH/TO/GKL/.../libgkl_pairhmm_shacc.so /usr/local/
 
 ## OpenMP 4t + FPGA 96w
 ```
-./fpga/fpga_loading_script.sh agfi-08b44cb4440d82d3e agfi-003c75629c2a7f3bf
+./fpga/fpga_loading_script.sh agfi-003c75629c2a7f3bf
 
 /home/centos/src/project_data/PHMM-F1/gatk/gatk HaplotypeCaller -R Homo_sapiens_assembly18.fasta -I NA12878.ga2.exome.maq.raw.sorted.bam -O call.vcf -L chr1 --smith-waterman AVX_ENABLED --pairHMM EXPERIMENTAL_FPGA_LOGLESS_CACHING --native-pair-hmm-threads 4 &> omp4t_FPGA96w_chr1.log
 
