@@ -1,6 +1,21 @@
 # PHMM-F1
 FPGA Accelerator (Amazon F1) for the Pair-HMM Forward Algorithm of the GATK HaplotypeCaller
 
+## Reference
+
+Wertenbroek, R., & Thoma, Y. (2019, November). Acceleration of the Pair-HMM forward algorithm on FPGA with cloud integration for GATK. In 2019 IEEE International Conference on Bioinformatics and Biomedicine (BIBM) (pp. 534-541). IEEE.
+
+```
+@inproceedings{wertenbroek2019acceleration,
+  title={Acceleration of the Pair-HMM forward algorithm on FPGA with cloud integration for GATK},
+  author={Wertenbroek, Rick and Thoma, Yann},
+  booktitle={2019 IEEE International Conference on Bioinformatics and Biomedicine (BIBM)},
+  pages={534--541},
+  year={2019},
+  organization={IEEE}
+}
+```
+
 ## Disclaimer
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
