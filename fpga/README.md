@@ -135,16 +135,13 @@ This will launch the Hardware-Software co-simulation.
 In order to do the simulation with another simulator (E.g., the Xilinx simulator) instead of Questasim, Makefiles require to be created, use the questasim Makefiles as a reference and adapt to your simulator.
 
 ## HW Top-level simulation
-TODO.
 
 This is a top level simulation without software interaction (System-Verilog testbench).
 
 ## Workgroup simulation
-TODO.
 
 This is a simulation at the workgroup level.
 
 ## Worker simulation
-TODO.
 
 This is a simulation at the worker level.
